@@ -1,62 +1,64 @@
-# Some necessary includes: Flask, SQLite and some system functions
 from flask import Flask, g, render_template, redirect, request, Response
 import sys
-import os
-from subprocess import *
 # Tornado web server
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
-import logging as log
 
+#Debug logger, This code can be skipped if not needed
+import logging 
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
 
-# Just a debugging flag to switch off Flask and Tornado
-web = True
-
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+root.addHandler(ch)
 
 def return_dict():
     dict_here = [
-        {'id': 1, 'name': 'Claps', 'link': 'music/song.mp3', 'genre': 'General', 'rating': 5},
-        {'id': 2, 'name': 'Bom Diggy','link': 'music/bom.mp3', 'genre': 'Bollywood', 'rating': 3},
-        {'id': 3, 'name': 'Tera yaar hoon main', 'link': 'music/yaar.mp3', 'genre': 'Bollywood', 'rating': 2}
+        {'id': 1, 'name': 'Acoustic Breeze', 'link': 'music/acousticbreeze.mp3', 'genre': 'General', 'chill out': 5},
+        {'id': 2, 'name': 'Happy Rock','link': 'music/happyrock.mp3', 'genre': 'Bollywood', 'rating': 4},
+        {'id': 3, 'name': 'Ukulele', 'link': 'music/ukulele.mp3', 'genre': 'Bollywood', 'rating': 4}
         ]
-
     return dict_here
 
 # Initialize Flask.
-if web:
-    app = Flask(__name__)
+app = Flask(__name__)
 
-if web:
-    @app.route('/')
-    def show_entries():
-        general_Data = {
-            'title': 'Music Player'}
-        print(return_dict())
-        stream_entries = return_dict()
-        return render_template('design.html', entries=stream_entries, **general_Data)
 
-    @app.route('/<int:stream_id>')
-    def mpc_play(stream_id):
-            def generate():
-                data = return_dict()
-                for item in data:
-                    if item['id'] == stream_id:
-                        song = item['link']
-                with open(song, "rb") as fwav:
-                    data = fwav.read(1024)
-                    while data:
-                        yield data
-                        data = fwav.read(1024)
-                        log.warning(data)
-                        
-            return Response(generate(), mimetype="audio/mp3")
+#Route to render GUI
+@app.route('/')
+def show_entries():
+    general_Data = {
+        'title': 'Music Player'}
+    print(return_dict())
+    stream_entries = return_dict()
+    return render_template('simple.html', entries=stream_entries, **general_Data)
 
+#Route to stream music
+@app.route('/<int:stream_id>')
+def streammp3(stream_id):
+    def generate():
+        data = return_dict()
+        count = 1
+        for item in data:
+            if item['id'] == stream_id:
+                song = item['link']
+        with open(song, "rb") as fwav:
+            data = fwav.read(1024)
+            while data:
+                yield data
+                data = fwav.read(1024)
+                logging.debug('Music data fragment : ' + str(count))
+                count += 1
+                
+    return Response(generate(), mimetype="audio/mp3")
 
 #launch a Tornado server with HTTPServer.
 if __name__ == "__main__":
-
-    if web:
-        http_server = HTTPServer(WSGIContainer(app))
-        http_server.listen(5000)
-        IOLoop.instance().start()
+    http_server = HTTPServer(WSGIContainer(app))
+    http_server.listen(5000)
+    IOLoop.instance().start()
