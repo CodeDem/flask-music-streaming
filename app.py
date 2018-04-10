@@ -1,11 +1,11 @@
-from flask import Flask, g, render_template, redirect, request, Response
+from flask import Flask,render_template, Response
 import sys
 # Tornado web server
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
-#Debug logger, This code can be skipped if not needed
+#Debug logger
 import logging 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -17,7 +17,9 @@ formatter = logging.Formatter(
 ch.setFormatter(formatter)
 root.addHandler(ch)
 
+
 def return_dict():
+    #Dictionary to store music file information
     dict_here = [
         {'id': 1, 'name': 'Acoustic Breeze', 'link': 'music/acousticbreeze.mp3', 'genre': 'General', 'chill out': 5},
         {'id': 2, 'name': 'Happy Rock','link': 'music/happyrock.mp3', 'genre': 'Bollywood', 'rating': 4},
@@ -59,6 +61,9 @@ def streammp3(stream_id):
 
 #launch a Tornado server with HTTPServer.
 if __name__ == "__main__":
+    port = 5000
     http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(5000)
+    logging.debug("Started Server, Kindly visit http://localhost:" + str(port))
+    http_server.listen(port)
     IOLoop.instance().start()
+    

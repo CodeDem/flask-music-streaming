@@ -18,7 +18,7 @@ Tornado Web Server
 
 ### Installing
 
-Installin dependencies 
+Installing dependencies 
 ```
 pip install -r requirements.txt
 ```
