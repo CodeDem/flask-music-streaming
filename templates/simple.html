@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        {% for entry in entries %}
+        <div>
+            <h2>{{ entry.name }}</h2>
+            <div>
+                <div>
+                    <div>Genre:
+                        <b>{{ entry.genre }}</b>
+                    </div>
+                </div>
+                <div>
+                    <div>Rating:
+                        <b>{{ entry.rating }}</b>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <audio controls>
+                            <source src="http://localhost:5000/{{ entry.id }}" type="audio/mp3">
+                        </audio>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+        {% else %}
+        <li>
+            <em>Unbelievable. No entries so far</em>
+            {% endfor %}
+    </div>
+</body>
+</html>

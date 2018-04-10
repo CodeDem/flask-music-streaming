@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Simple interface to make some music using a raspberry pi">
+    <meta name="author" content="Robert Filter">
+    <link rel="icon" href="">
+    <title>{{ title }}</title>
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="jumbotron">
+            <h1>Playlist</h1>
+        </div>
+
+        <div id="sl">
+            {% for entry in entries %}
+            <div class="well">
+                <h2>{{ entry.name }}</h2>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div></div>
+                    </div>
+                    <div class="col-md-3">
+                        <div>Genre:
+                            <b>{{ entry.genre }}</b>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div>Rating:
+                            <b>{{ entry.rating }}</b>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="pull-right">
+                            <audio controls>
+                                <source src="http://localhost:5000/{{ entry.id }}" type="audio/mp3">
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            {% else %}
+            <li>
+                <em>Unbelievable. No entries so far</em>
+                {% endfor %}
+        </div>
+    </div>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</body>
+
+</html>
